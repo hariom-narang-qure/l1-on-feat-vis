@@ -1,0 +1,28 @@
+[project]
+name = "l1-on-feat-vis"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Hariom Narang", email = "hariom.narang@qure.ai" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.11.2",
+    "nibabel>=5.4.2",
+    "pydantic>=2.14.1",
+    "scikit-learn>=1.9.1",
+    "scipy>=1.18.1",
+    "timm>=1.0.30",
+    "torch-lucent>=0.1.8",
+    "totalsegmentator>=2.18.0",
+    "transformers>=5.20.2",
+    "voxtell>=0.1.2",
+]
+
+[project.scripts]
+l1-on-feat-vis = "l1_on_feat_vis:main"
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"
