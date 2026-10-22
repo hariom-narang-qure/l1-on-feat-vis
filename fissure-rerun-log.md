@@ -381,6 +381,13 @@ selected units 0.154 (10 nets: 0.131); **head test tolerant Dice 0.441** (0.457 
 correctness 0.73), vs 0.385 with 10. Doubling the networks gained +0.056 at the head, more than the token probe
 suggested (~+0.02 per doubling). If the head keeps gaining ~0.05 per doubling, matching selected pretrained units
 (0.771) would take roughly 6 more doublings (~1000+ networks); a 40-net run would test whether the gain holds.
+
+**40 random networks** (seeds 0–39, 15,360 units): selected units' token CV AP 0.173, but **head test
+tolerant Dice 0.346** (0.359 / 0.333), below both 20 nets (0.441) and 10 nets (0.385). The gain did not hold:
+the probe keeps improving with more networks, the head does not. Seed averaging removes the head's training
+noise but not the variance of *which* 180 units get selected and of the 5-scan test set (±~0.05 between runs),
+so the 20-net result was most likely a favourable draw. With this setup more random networks give no reliable
+gain at the head; they stay at 0.35–0.44 vs 0.77 for selected pretrained units.
 The fissure signal is mostly from pretraining (every selected unit's random-init twin scores chance).
 
 ## Reproduce
