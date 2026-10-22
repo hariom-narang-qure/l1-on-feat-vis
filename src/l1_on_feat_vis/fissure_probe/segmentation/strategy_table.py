@@ -15,6 +15,7 @@ from l1_on_feat_vis.fissure_probe.data.views import VIEWS
 ROWS = [
     ("CT only", "ct_only"),
     ("10 random conv nets (60 blocks), forward-selected units", "test_random_nets"),
+    ("20 random conv nets (120 blocks), forward-selected units", "test_random_nets20"),
     ("DINOv2-B final layer, frozen, all dims", "test_final_dinov2_b"),
     ("DINOv2-L final layer, frozen, all dims", "test_final_dinov2_l"),
     ("DINOv2-L res17 (most generalisers), frozen, all dims", "test_layer_dinov2_l_res17"),

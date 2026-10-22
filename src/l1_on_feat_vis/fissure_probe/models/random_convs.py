@@ -1,6 +1,6 @@
 """Randomly initialised conv nets: how much fissure signal do untrained features carry?
 
-Ten nets, one architecture, seeds 0-9, never trained:
+Twenty nets, one architecture, seeds 0-19, never trained (the first run used seeds 0-9):
   6 blocks of conv 3x3 -> ReLU, 64 channels each, strides 1, 2, 2, 2, 2, 1.
   At 1024 px input (like ConvNeXt / ResNet in store.py) the blocks run at
   1024, 512, 256, 128, 64, 64 px; the last block sees ~125 input px (~62 canvas
@@ -28,7 +28,7 @@ from torch import nn
 from l1_on_feat_vis.fissure_probe.data.rows import Rows
 from l1_on_feat_vis.fissure_probe.store.store import MODELS_2D, StoreWriter, to_token_grid
 
-SEEDS = range(10)
+SEEDS = range(20)
 WIDTH, STRIDES = 64, (1, 2, 2, 2, 2, 1)
 GREY_MEAN, GREY_STD = np.array([0.5] * 3), np.array([0.25] * 3)
 
@@ -75,10 +75,18 @@ def layer_names():
 
 
 def extract():
-    """Store columns for every random-net layer at every row (the pretrained store's done markers are not touched)."""
-    names = register()
+    """Store columns for every random-net layer at every row (the pretrained store's done markers are not touched).
+
+    Nets whose layers are already in the store are skipped, so raising SEEDS only extracts the new ones.
+    """
+    from l1_on_feat_vis.fissure_probe.store.store import ACTS
+    scans = Rows().scans
+    names = [name for name in register() if not all((ACTS / name / "b5" / f"{scan}.npy").exists() for scan in scans)]
+    print(f"extracting {len(names)} random nets: {names}", flush=True)
+    if not names:
+        return
     writer = StoreWriter(names, [], torch.device("cuda"))
-    for scan in Rows().scans:
+    for scan in scans:
         start = time.time()
         widths = writer.write_scan(scan)
         print(f"{scan}: {len(widths)} layers, {sum(widths.values())} units in {time.time() - start:.0f}s", flush=True)

@@ -374,9 +374,14 @@ a single layer, however regularised, does not: the signal is spread over many la
 | Token CV AP, 180 forward-selected units | 0.131 | 168 selected units 0.692 |
 | Head, test tolerant Dice (2 seeds) | **0.385** (0.364 / 0.406); completeness 0.26, correctness 0.75 | 0.771 (selected), 0.752 (random generalisers) |
 
-Random features double what CT alone gives (0.187 → 0.385) but find only a quarter of the fissure length;
-each doubling of networks adds ~0.02 token AP, so scale will not close the gap. The fissure signal comes from
-pretraining (consistent with every selected unit's random-init twin scoring chance).
+Random features double what CT alone gives (0.187 → 0.385) but find only a quarter of the fissure length.
+
+**20 random networks** (seeds 0–19, 7680 units; same selection to 180 units, same head): token CV AP of the
+selected units 0.154 (10 nets: 0.131); **head test tolerant Dice 0.441** (0.457 / 0.425; completeness 0.32,
+correctness 0.73), vs 0.385 with 10. Doubling the networks gained +0.056 at the head, more than the token probe
+suggested (~+0.02 per doubling). If the head keeps gaining ~0.05 per doubling, matching selected pretrained units
+(0.771) would take roughly 6 more doublings (~1000+ networks); a 40-net run would test whether the gain holds.
+The fissure signal is mostly from pretraining (every selected unit's random-init twin scores chance).
 
 ## Reproduce
 
