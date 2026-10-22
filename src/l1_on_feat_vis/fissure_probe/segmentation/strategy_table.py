@@ -17,6 +17,8 @@ ROWS = [
     ("10 random conv nets (60 blocks), forward-selected units", "test_random_nets"),
     ("20 random conv nets (120 blocks), forward-selected units", "test_random_nets20"),
     ("40 random conv nets (240 blocks), forward-selected units", "test_random_nets40"),
+    ("10 deep random conv nets (20 blocks, 64 ch), forward-selected units", "test_random_deep10"),
+    ("10 deep random conv nets (20 blocks, 16 ch), forward-selected units", "test_random_deep16"),
     ("DINOv2-B final layer, frozen, all dims", "test_final_dinov2_b"),
     ("DINOv2-L final layer, frozen, all dims", "test_final_dinov2_l"),
     ("DINOv2-L res17 (most generalisers), frozen, all dims", "test_layer_dinov2_l_res17"),

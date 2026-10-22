@@ -390,6 +390,13 @@ so the 20-net result was most likely a favourable draw. With this setup more ran
 gain at the head; they stay at 0.35–0.44 vs 0.77 for selected pretrained units.
 The fissure signal is mostly from pretraining (every selected unit's random-init twin scores chance).
 
+**Deep random networks** (`rand_deep`, seeds 100–109: the same 4 downsamplings, then 15 stride-1 blocks, 20
+blocks in all; the last block sees 513 input px, most of the lung). 64 channels: selected units' token CV AP
+0.209 (best of any random family), **head test tolerant Dice 0.333** (0.353 / 0.312). 16 channels (`rand_deep16`,
+same seeds and strides, a quarter of the units): token CV AP 0.158, **head 0.354** (0.371 / 0.336).
+Depth raises the token probe a little but not the head, and 4x the channels changes nothing beyond seed noise:
+every random family sits at 0.33–0.44 at the head.
+
 ## Reproduce
 
 All under `uv run python -m l1_on_feat_vis.fissure_probe.<subpackage>.<module>`; set `CUDA_VISIBLE_DEVICES`
