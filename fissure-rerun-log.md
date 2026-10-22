@@ -337,17 +337,23 @@ fold), min over folds. Sheet: `outputs/fissure_rerun/top_activations.png`.
 
 ## Reproduce
 
-All under `uv run python -m l1_on_feat_vis.fissure_probe.<module>`; set `CUDA_VISIBLE_DEVICES` (GPUs are shared).
+All under `uv run python -m l1_on_feat_vis.fissure_probe.<subpackage>.<module>`; set `CUDA_VISIBLE_DEVICES`
+(GPUs are shared).
 
 | Step | Module | Output under `/realdata/hariom.narang/fissure_acts/` |
 |---|---|---|
-| canvases + labels | `views` (`view_figures` for sanity sheets) | `slices/<scan>.npz`, `slices/report.json` |
-| row table | `rows` | `rows.npz` |
-| activation store | `store` (two processes: add `--reverse` to the second) | `acts/<model>/<layer>/<scan>.npy` (50 GB) |
-| unit scores | `cv_scores` | `scores/*.npz` |
-| forward selection | `forward_select --name all_layers`; `old_recipe` for E0 | `selection/*.json` (`pool_at` rebuilds a step's pool) |
-| unit maps | `unit_maps --units <selection json>` | `maps/<layer>/<unit>.npy` |
-| heads | `head --units <json> --k 0 --seeds 0 1 --name ...` (`--oof` for train CV) | `heads/*.json`, `*.pt` |
-| recall / precision | `finesse --oof <tag> --pool <json> --name ...` | `selection/finesse_*.json` |
-| test table | `strategy_table` | printed |
-| diagnostics | `view_agreement`, `cross_view --head <pt>`, `unit_evidence --pool <json>` | `heads/*_cross_view.json`, `evidence/` |
+| canvases + labels | `data.views` (`data.view_figures` for sanity sheets) | `slices/<scan>.npz`, `slices/report.json` |
+| row table | `data.rows` | `rows.npz` |
+| activation store | `store.store` (two processes: add `--reverse` to the second) | `acts/<model>/<layer>/<scan>.npy` (50 GB) |
+| unit scores | `selection.cv_scores` | `scores/*.npz` |
+| forward selection | `selection.forward_select --name all_layers`; `selection.old_recipe` for E0 | `selection/*.json` (`pool_at` rebuilds a step's pool) |
+| unit maps | `store.unit_maps --units <selection json>` | `maps/<layer>/<unit>.npy` |
+| heads | `segmentation.head --units <json> --k 0 --seeds 0 1 --name ...` (`--oof` for train CV) | `heads/*.json`, `*.pt` |
+| recall / precision | `selection.finesse --oof <tag> --pool <json> --name ...` | `selection/finesse_*.json` |
+| whole-layer baseline | `selection.whole_layers` | `selection/whole_layers.json` |
+| test table | `segmentation.strategy_table` | printed |
+| diagnostics | `data.view_agreement`, `segmentation.cross_view --head <pt>`, `evidence.unit_evidence --pool <json>` | `heads/*_cross_view.json`, `evidence/` |
+
+Code layout (`src/l1_on_feat_vis/`): `fissure_probe/` holds `data`, `models`, `store`, `selection`,
+`segmentation`, `evidence` and `sheet_probing` (the first pass on the interpolated sheet; a few of its helpers
+are still imported by the stages above); `feature_vis/` holds the InceptionV1 feature-visualisation work.
