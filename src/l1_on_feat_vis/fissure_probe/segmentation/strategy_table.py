@@ -14,6 +14,8 @@ from l1_on_feat_vis.fissure_probe.data.views import VIEWS
 
 ROWS = [
     ("CT only", "ct_only"),
+    ("DINOv2-B final layer, frozen, all dims", "test_final_dinov2_b"),
+    ("DINOv2-L final layer, frozen, all dims", "test_final_dinov2_l"),
     ("E0 old recipe (30 blocks, top-8, L1 path)", "test_e0"),
     ("random generalisers, 84 (control)", "test_random84"),
     ("E1 all layers, CV forward selection, 84", "test_e1_step8"),

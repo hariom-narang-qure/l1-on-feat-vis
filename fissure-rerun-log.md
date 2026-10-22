@@ -335,6 +335,26 @@ fold), min over folds. Sheet: `outputs/fissure_rerun/top_activations.png`.
 - Erase / insert tests for the nine fissure units above.
 - Delete the old-ground-truth features (`outputs/fissure_probe/`, 25 GB) once no longer needed.
 
+## Baseline: frozen DINOv2 final-layer embeddings (added 2026-10-22)
+
+The simplest alternative to selecting units: every dimension of the last DINOv2 block's tokens (residual
+stream after block 11 of DINOv2-B / block 23 of DINOv2-L, before the final LayerNorm), frozen, into the same
+CT-skip head, same training, threshold / post-processing tuning, test scans and two seeds as the table above.
+
+| Head input | units | test tolerant Dice | completeness | correctness | pixel AP | axial / coronal / sagittal |
+|---|---|---|---|---|---|---|
+| DINOv2-B final layer | 768 | 0.643 (±0.002) | 0.525 | 0.828 | 0.547 | 0.721 / 0.598 / 0.605 |
+| DINOv2-L final layer | 1024 | 0.693 (±0.008) | 0.605 | 0.811 | 0.576 | 0.748 / 0.661 / 0.669 |
+| random generalisers (control) | 168 | 0.752 | 0.702 | 0.810 | 0.653 | 0.800 / 0.723 / 0.733 |
+| E1 selected units | 168 | 0.771 | 0.733 | 0.813 | 0.692 | 0.807 / 0.739 / 0.762 |
+
+- **Selected units beat the frozen final layer by +0.08 (DINOv2-L) and +0.13 (DINOv2-B)** with 6× fewer inputs;
+  even random generalisers from many layers beat it (+0.06). The final layer is too abstract: the fissure
+  signal sits in middle layers (DINOv2-B res6–10, DINOv2-L res10–17) and in other networks.
+- The loss is almost all recall (completeness 0.53–0.61 vs 0.73); correctness is the same. The final-layer
+  heads simply find fewer fissures, worst on coronal / sagittal.
+- Not yet compared: a fine-tuned DINOv2 (LoRA or last blocks unfrozen), and the best whole middle layer.
+
 ## Reproduce
 
 All under `uv run python -m l1_on_feat_vis.fissure_probe.<subpackage>.<module>`; set `CUDA_VISIBLE_DEVICES`
