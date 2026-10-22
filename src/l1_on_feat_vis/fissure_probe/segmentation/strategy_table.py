@@ -14,8 +14,10 @@ from l1_on_feat_vis.fissure_probe.data.views import VIEWS
 
 ROWS = [
     ("CT only", "ct_only"),
+    ("10 random conv nets (60 blocks), forward-selected units", "test_random_nets"),
     ("DINOv2-B final layer, frozen, all dims", "test_final_dinov2_b"),
     ("DINOv2-L final layer, frozen, all dims", "test_final_dinov2_l"),
+    ("DINOv2-L res17 (most generalisers), frozen, all dims", "test_layer_dinov2_l_res17"),
     ("E0 old recipe (30 blocks, top-8, L1 path)", "test_e0"),
     ("random generalisers, 84 (control)", "test_random84"),
     ("E1 all layers, CV forward selection, 84", "test_e1_step8"),
@@ -43,6 +45,9 @@ def table():
         if not path.exists():
             continue
         runs = [r for r in json.loads(path.read_text()) if r.get("test")]
+        seed_one = HEADS / f"{name}_s1.json"  # some baselines ran seed 1 as a separate run name
+        if seed_one.exists():
+            runs += [r for r in json.loads(seed_one.read_text()) if r.get("test")]
         if name == "test_e0":
             runs += [r for r in json.loads((HEADS / "e0_old_recipe.json").read_text()) if r["seed"] not in {x["seed"] for x in runs}]
         td, spread = mean_of(runs, "test", "tolerant_dice")

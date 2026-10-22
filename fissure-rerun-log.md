@@ -355,6 +355,29 @@ CT-skip head, same training, threshold / post-processing tuning, test scans and 
   heads simply find fewer fissures, worst on coronal / sagittal.
 - Not yet compared: a fine-tuned DINOv2 (LoRA or last blocks unfrozen), and the best whole middle layer.
 
+## Baselines: one whole middle layer, and randomly initialised networks (added 2026-10-22)
+
+**One whole layer.** DINOv2-L res17, the layer that contributes most units to the random-generaliser pool
+(103 generalisers), all 1024 dims frozen into the same head: test tolerant Dice 0.707 (0.725 / 0.689), vs 0.693
+for DINOv2-L's final layer and 0.771 for selected units. Token level, same probe: whole res17 0.526 (best
+ridge 0.541), DINOv2-L final 0.468, DINOv2-B final 0.456; all 3270 pretrained generalisers at once 0.677
+(best ridge 0.1); selected 168 units 0.692. Gradient descent on the screened pool nearly matches the search;
+a single layer, however regularised, does not: the signal is spread over many layers and networks.
+
+**Random networks** (`models/random_convs.py`): 10 nets, 6 blocks of conv 3x3 + ReLU, 64 channels, strides
+1, 2, 2, 2, 2, 1, He-normal weights, never trained; 3840 units, scored and selected like the pretrained ones.
+
+| Measure | Random nets | Pretrained |
+|---|---|---|
+| Units passing the per-fold screen | 0 of 3840 (best min-fold ring AUROC 0.589, AP lift 2.0×) | 3270 of 176,793 |
+| Token CV AP, all units in one probe | 1 net 0.128, 2 nets 0.144, 5 nets 0.172, 10 nets 0.187 | 3270 generalisers 0.677 |
+| Token CV AP, 180 forward-selected units | 0.131 | 168 selected units 0.692 |
+| Head, test tolerant Dice (2 seeds) | **0.385** (0.364 / 0.406); completeness 0.26, correctness 0.75 | 0.771 (selected), 0.752 (random generalisers) |
+
+Random features double what CT alone gives (0.187 → 0.385) but find only a quarter of the fissure length;
+each doubling of networks adds ~0.02 token AP, so scale will not close the gap. The fissure signal comes from
+pretraining (consistent with every selected unit's random-init twin scoring chance).
+
 ## Reproduce
 
 All under `uv run python -m l1_on_feat_vis.fissure_probe.<subpackage>.<module>`; set `CUDA_VISIBLE_DEVICES`
